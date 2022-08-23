@@ -1,21 +1,47 @@
 package cepgo
 
-import "errors"
+import (
+	"errors"
+)
 
-type ServiceRequester interface {
-	Execute(cep string, ch chan<- *CEP, errCh chan<- error)
+var ErrorNotConclued = errors.New("error not conclued")
+var ErrorInAllRequests = errors.New("error in all requests")
+var deafultProviders = []ServiceRequester{&ServiceBrasilAPO{}, &ViaCEP{}}
+
+type (
+	ServiceRequester interface {
+		Execute(cep string, ch chan<- *CEP, errCh chan<- error)
+	}
+	Service struct {
+		Providers []ServiceRequester
+	}
+	ServiceResponse struct {
+		Cep *CEP
+		Err error
+	}
+
+	Provider interface {
+		GetCEP(cep string) (*CEP, error)
+	}
+)
+
+func New() Provider {
+	return &Service{
+		Providers: deafultProviders,
+	}
 }
 
-type Service struct {
-	Providers []ServiceRequester
+func OverrideProvider(providers ...ServiceRequester) Provider {
+	return &Service{
+		Providers: providers,
+	}
 }
 
-type ServiceResponse struct {
-	Cep *CEP
-	Err error
+func (s *Service) AppendProvider(provider ServiceRequester) {
+	s.Providers = append(s.Providers, provider)
 }
 
-func (s *Service) ExecuteRequest(cep string) (*CEP, error) {
+func (s *Service) GetCEP(cep string) (*CEP, error) {
 	var erros []error
 	ch := make(chan *CEP)
 	err := make(chan error)
@@ -37,8 +63,8 @@ func (s *Service) ExecuteRequest(cep string) (*CEP, error) {
 	}
 
 	if len(erros) == len(s.Providers) {
-		return nil, errors.New("none has been conclued")
+		return nil, ErrorNotConclued
 	}
 
-	return nil, errors.New("none has been conclued")
+	return nil, ErrorInAllRequests
 }

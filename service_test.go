@@ -10,10 +10,8 @@ import (
 var ErrorSumulated = errors.New("Simulated error")
 
 func TestValidConcurrentSameRequest(t *testing.T) {
-	service := &cepgo.Service{
-		Providers: []cepgo.ServiceRequester{&cepgo.ServiceBrasilAPO{}, &cepgo.ViaCEP{}},
-	}
-	data, err := service.ExecuteRequest("41342315")
+
+	data, err := cepgo.New().GetCEP("41342315")
 	if err != nil {
 		t.Fail()
 	}
@@ -35,10 +33,7 @@ func (c *CustonError) Execute(cep string, ch chan<- *cepgo.CEP, errCh chan<- err
 }
 
 func TestWithAllErrorInRequest(t *testing.T) {
-	service := &cepgo.Service{
-		Providers: []cepgo.ServiceRequester{&CustonError{}, &CustonError{}},
-	}
-	data, err := service.ExecuteRequest("41342315")
+	data, err := cepgo.OverrideProvider(&CustonError{}, &CustonError{}).GetCEP("41342315")
 	if err == nil {
 		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
 	}
@@ -48,10 +43,7 @@ func TestWithAllErrorInRequest(t *testing.T) {
 }
 
 func TestWithOneErrorANdOneSucess(t *testing.T) {
-	service := &cepgo.Service{
-		Providers: []cepgo.ServiceRequester{&cepgo.ServiceBrasilAPO{}, &CustonError{}},
-	}
-	data, err := service.ExecuteRequest("41342315")
+	data, err := cepgo.OverrideProvider(&cepgo.ServiceBrasilAPO{}, &CustonError{}).GetCEP("41342315")
 	if err != nil {
 		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
 	}

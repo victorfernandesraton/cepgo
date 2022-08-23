@@ -5,7 +5,22 @@ import (
 	"fmt"
 )
 
-type ViaCEP struct{}
+type (
+	ViaCEP struct{}
+
+	ViaCepModel struct {
+		CEP         string `json:"cep"`
+		Logradouro  string `json:"logradouro"`
+		Complemento string `json:"complemento"`
+		Bairro      string `json:"bairro"`
+		Localidade  string `json:"localidade"`
+		UF          string `json:"uf"`
+		IBGE        string `json:"ibge"`
+		GIA         string `json:"gia"`
+		DDD         string `json:"ddd"`
+		SIAFI       string `json:"siafi"`
+	}
+)
 
 func (c *ViaCEP) Execute(cep string, ch chan<- *CEP, errCh chan<- error) {
 	var model *ViaCepModel
