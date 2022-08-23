@@ -16,17 +16,19 @@ type BrasilAPIModel struct {
 	City         string `json:"city"`
 }
 
-func (c *ServiceBrasilAPO) Execute(cep string, ch chan<- CEP) {
+func (c *ServiceBrasilAPO) Execute(cep string, ch chan<- *CEP, errCh chan<- error) {
 	var model *BrasilAPIModel
 	body, err := requester(fmt.Sprintf("https://brasilapi.com.br/api/cep/v1/%s", cep))
 	if err != nil {
+		errCh <- err
 		return
 	}
 	if err := json.Unmarshal(body, &model); err != nil {
+		errCh <- err
 		return
 	}
 
-	ch <- CEP{
+	ch <- &CEP{
 		Cep:          model.CEP,
 		Street:       model.Street,
 		Neighborhood: model.Neighborhood,

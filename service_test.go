@@ -1,19 +1,22 @@
 package cepgo_test
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/victorfernandesraton/cepgo"
 )
 
+var ErrorSumulated = errors.New("Simulated error")
+
 func TestValidConcurrentSameRequest(t *testing.T) {
-	providers := []cepgo.ServiceRequester{&cepgo.ServiceBrasilAPO{}, &cepgo.ViaCEP{}}
 	service := &cepgo.Service{
-		Providers: providers,
+		Providers: []cepgo.ServiceRequester{&cepgo.ServiceBrasilAPO{}, &cepgo.ViaCEP{}},
 	}
-	data := service.ExecuteRequest("41342315")
-	fmt.Println(data)
+	data, err := service.ExecuteRequest("41342315")
+	if err != nil {
+		t.Fail()
+	}
 	if data == nil {
 		t.Fail()
 	}
@@ -21,4 +24,38 @@ func TestValidConcurrentSameRequest(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+type CustonError struct {
+}
+
+func (c *CustonError) Execute(cep string, ch chan<- *cepgo.CEP, errCh chan<- error) {
+	errCh <- ErrorSumulated
+	return
+}
+
+func TestWithAllErrorInRequest(t *testing.T) {
+	service := &cepgo.Service{
+		Providers: []cepgo.ServiceRequester{&CustonError{}, &CustonError{}},
+	}
+	data, err := service.ExecuteRequest("41342315")
+	if err == nil {
+		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
+	}
+	if data != nil {
+		t.Fatalf("expect %v, got %v", true, data)
+	}
+}
+
+func TestWithOneErrorANdOneSucess(t *testing.T) {
+	service := &cepgo.Service{
+		Providers: []cepgo.ServiceRequester{&cepgo.ServiceBrasilAPO{}, &CustonError{}},
+	}
+	data, err := service.ExecuteRequest("41342315")
+	if err != nil {
+		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
+	}
+	if data == nil {
+		t.Fatalf("expect %v, got %v", true, data)
+	}
 }
