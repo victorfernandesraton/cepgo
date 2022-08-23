@@ -21,7 +21,6 @@ func TestValidConcurrentSameRequest(t *testing.T) {
 	if data.State != "BA" {
 		t.Fail()
 	}
-
 }
 
 type CustonError struct {
@@ -34,8 +33,8 @@ func (c *CustonError) Execute(cep string, ch chan<- *cepgo.CEP, errCh chan<- err
 
 func TestWithAllErrorInRequest(t *testing.T) {
 	data, err := cepgo.OverrideProvider(&CustonError{}, &CustonError{}).GetCEP("41342315")
-	if err == nil {
-		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
+	if err != cepgo.ErrorInAllRequests {
+		t.Fatalf("expect %v, got %v", cepgo.ErrorInAllRequests, err)
 	}
 	if data != nil {
 		t.Fatalf("expect %v, got %v", true, data)
@@ -48,6 +47,9 @@ func TestWithOneErrorANdOneSucess(t *testing.T) {
 		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
 	}
 	if data == nil {
-		t.Fatalf("expect %v, got %v", true, data)
+		t.Fail()
+	}
+	if data.State != "BA" {
+		t.Fail()
 	}
 }

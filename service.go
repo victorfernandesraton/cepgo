@@ -37,16 +37,17 @@ func OverrideProvider(providers ...ServiceRequester) Provider {
 	}
 }
 
-func (s *Service) AppendProvider(provider ServiceRequester) {
-	s.Providers = append(s.Providers, provider)
-}
-
+// GetCEp is a concurrent handler to get data from best api. This behavior is similar to Promise.any in javascript
 func (s *Service) GetCEP(cep string) (*CEP, error) {
+	parsedCep, errInParse := ParseCEPString(cep)
+	if errInParse != nil {
+		return nil, errInParse
+	}
 	var erros []error
 	ch := make(chan *CEP)
 	err := make(chan error)
 	for _, handler := range s.Providers {
-		go handler.Execute(cep, ch, err)
+		go handler.Execute(parsedCep, ch, err)
 	}
 
 	for i := 0; i < len(s.Providers); i++ {
@@ -63,8 +64,8 @@ func (s *Service) GetCEP(cep string) (*CEP, error) {
 	}
 
 	if len(erros) == len(s.Providers) {
-		return nil, ErrorNotConclued
+		return nil, ErrorInAllRequests
 	}
 
-	return nil, ErrorInAllRequests
+	return nil, ErrorNotConclued
 }
