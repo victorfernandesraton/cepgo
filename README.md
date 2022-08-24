@@ -1,5 +1,7 @@
 # gocep: Consulta de informaçõessobre um CEP de forma nativa e concorrente
 
+[![Go](https://github.com/victorfernandesraton/cepgo/actions/workflows/go.yml/badge.svg)](https://github.com/victorfernandesraton/cepgo/actions/workflows/go.yml)
+
 Fazer consulta de CEP em 3 diferentes provedores e consumir a informação de forma concorrente usando a resposta mais eficiente
 
 ## Exemplo
