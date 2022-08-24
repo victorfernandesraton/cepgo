@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type ServiceBrasilAPO struct {
+type ServiceBrasilAPi struct {
 }
 
 type BrasilAPIModel struct {
@@ -16,7 +16,7 @@ type BrasilAPIModel struct {
 	City         string `json:"city"`
 }
 
-func (c *ServiceBrasilAPO) Execute(cep string, ch chan<- *CEP, errCh chan<- error) {
+func (c *ServiceBrasilAPi) Execute(cep string, ch chan<- *CEP, errCh chan<- error) {
 	var model *BrasilAPIModel
 	body, err := requester(fmt.Sprintf("https://brasilapi.com.br/api/cep/v1/%s", cep))
 	if err != nil {
@@ -24,7 +24,7 @@ func (c *ServiceBrasilAPO) Execute(cep string, ch chan<- *CEP, errCh chan<- erro
 		return
 	}
 	if err := json.Unmarshal(body, &model); err != nil {
-		errCh <- err
+		errCh <- ErrorUnexpectedResponse
 		return
 	}
 

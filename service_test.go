@@ -42,7 +42,7 @@ func TestWithAllErrorInRequest(t *testing.T) {
 }
 
 func TestWithOneErrorANdOneSucess(t *testing.T) {
-	data, err := cepgo.OverrideProvider(&cepgo.ServiceBrasilAPO{}, &CustonError{}).GetCEP("41342315")
+	data, err := cepgo.OverrideProvider(&cepgo.ServiceBrasilAPi{}, &CustonError{}).GetCEP("41342315")
 	if err != nil {
 		t.Fatalf("expect %v, got %v", ErrorSumulated, err)
 	}

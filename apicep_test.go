@@ -6,8 +6,8 @@ import (
 	"github.com/victorfernandesraton/cepgo"
 )
 
-func TestBrasilAPI(t *testing.T) {
-	var stub = &cepgo.ServiceBrasilAPi{}
+func TestAPICep(t *testing.T) {
+	var stub = &cepgo.ServiceApiCEP{}
 	testCases := []struct {
 		desc      string
 		cep       string
