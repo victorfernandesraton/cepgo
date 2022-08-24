@@ -26,16 +26,23 @@ func (c *ViaCEP) Execute(cep string, ch chan<- *CEP, errCh chan<- error) {
 	var model *ViaCepModel
 	body, err := requester(fmt.Sprintf("https://viacep.com.br/ws/%s/json/", cep))
 	if err != nil {
-		errCh <- err
+		errCh <- ErrorUnexpectedResponse
 		return
 	}
 	if err := json.Unmarshal(body, &model); err != nil {
-		errCh <- err
+		errCh <- ErrorUnexpectedResponse
+		return
+	}
+
+	cepNumber, err := ParseCEPString(model.CEP)
+
+	if err != nil {
+		errCh <- ErrorUnexpectedResponse
 		return
 	}
 
 	ch <- &CEP{
-		Cep:          model.CEP,
+		Cep:          cepNumber,
 		Street:       model.Logradouro,
 		Neighborhood: model.Bairro,
 		City:         model.Localidade,

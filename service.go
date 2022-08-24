@@ -6,6 +6,7 @@ import (
 
 var ErrorNotConclued = errors.New("error not conclued")
 var ErrorInAllRequests = errors.New("error in all requests")
+var ErrorUnexpectedResponse = errors.New("unexpected response from server") //
 var deafultProviders = []ServiceRequester{&ServiceBrasilAPO{}, &ViaCEP{}}
 
 type (

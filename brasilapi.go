@@ -20,7 +20,7 @@ func (c *ServiceBrasilAPO) Execute(cep string, ch chan<- *CEP, errCh chan<- erro
 	var model *BrasilAPIModel
 	body, err := requester(fmt.Sprintf("https://brasilapi.com.br/api/cep/v1/%s", cep))
 	if err != nil {
-		errCh <- err
+		errCh <- ErrorUnexpectedResponse
 		return
 	}
 	if err := json.Unmarshal(body, &model); err != nil {
