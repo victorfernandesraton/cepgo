@@ -11,7 +11,6 @@ package main
 
 func main() {
     data, err := cepgo.Get("41342315")
-    fmt.PrintLn(data)
     // {
     // Cep: "41342315",
     // State: "BA",
