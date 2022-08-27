@@ -1,4 +1,4 @@
-# gocep: Consulta de informaçõessobre um CEP de forma nativa e concorrente
+# gocep: Consulta de informações sobre um CEP de forma nativa e concorrente
 
 [![Go](https://github.com/victorfernandesraton/cepgo/actions/workflows/go.yml/badge.svg)](https://github.com/victorfernandesraton/cepgo/actions/workflows/go.yml)
 
