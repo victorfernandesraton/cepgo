@@ -10,9 +10,11 @@ var ErrorUnexpectedResponse = errors.New("unexpected response from server") //
 var deafultProviders = []ServiceRequester{&ServiceBrasilAPi{}, &ViaCEP{}}
 
 type (
+	// ServiceRequester is the interface that wraps the Request method. and recives channels for service
 	ServiceRequester interface {
 		Execute(cep string, ch chan<- *CEP, errCh chan<- error)
 	}
+	// Service is a struct that contains the request for various providers and delivery concurrent way to request data
 	Service struct {
 		Providers []ServiceRequester
 	}
@@ -32,6 +34,7 @@ func New() Provider {
 	}
 }
 
+// OverrideProvider is a function for creating a new Provider but oveerides services with yours custom providers
 func OverrideProvider(providers ...ServiceRequester) Provider {
 	return &Service{
 		Providers: providers,

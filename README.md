@@ -9,14 +9,10 @@ Fazer consulta de CEP em 3 diferentes provedores e consumir a informação de fo
 ```go
 package main
 
+import "github.com/victorfernandesraton/cepgo"
+
 func main() {
+    // You shold use 41.342-315 or 41342.315
     data, err := cepgo.Get("41342315")
-    // {
-    // Cep: "41342315",
-    // State: "BA",
-    // City: "Salvador",
-    // Street: "Estr. do Coqueiro Grande , Fazenda Grande II",
-    // "Neighborhood": "Cajazeiras"
-    // }
 }
 ```
